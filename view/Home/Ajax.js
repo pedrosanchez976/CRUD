@@ -107,7 +107,8 @@ function onError(e) {
        //xhr.open("GET", Lurl, Lasync, Lusername, Lpassword);
        xhr.open(Lmetodo, Lurl, Lasync, Lusername, Lpassword);
        // AQUI LAS CABECERAS NECESARIAS ------------------------
-       //xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+       if(Ldata)
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
        //xhr.setRequestHeader("cache-control", "no-cache");
        //xhr.setRequestHeader("cache-control", "no-cache");
        xhr.send(Ldata);

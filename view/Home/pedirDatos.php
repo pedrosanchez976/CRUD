@@ -7,26 +7,25 @@
 */
 header('Content-Type: application/json');
 
-    require_once("../../config/conexion.php"); 
-    require_once("../../Models/Producto.php"); 
+    require_once("../../models/conexionFB.php"); 
     
-    $tbProducto=new Producto();
+    $peticion=new conexionFB();
     /*
-    $serverData=$tbProducto->serverinfo();
+    $serverData=$peticion->serverinfo();
     echo "serverData: ";
     var_dump($serverData);
-    echo json_encode($serverData);*/
+    echo json_encode($serverData);
 
-    $prod_id=2;
-    $prod_nom='otro2eeee';
-    $dataSet=$tbProducto->get_producto();
-    //$dataSet=$tbProducto->get_producto_x_id($prod_id);
-    //$dataSet= $tbProducto->get_producto_x_nom($prod_nom);
-    //$dataSet=$tbProducto->insert_producto($prod_nom);
-   //$dataSet= $tbProducto->update_producto($prod_id,$prod_nom);  // resultado= 1
-   //$dataSet= $tbProducto->delete_producto($prod_id);  // resultado= 1
-   //echo($dataSet); 
-
+    $SQL_sentence="SELECT * FROM tm_producto";
+    $SQL_sentence="SELECT * FROM HOSPITALES a WHERE idhospital=2";
+    */
+    $dataSet=null;
+    if($_REQUEST['query']){
+        $SQL_sentence=htmlspecialchars($_REQUEST['query']);// htmlspecialchars($_GET["name"])
+        $dataSet=$peticion->executeSQL($SQL_sentence);
+    }
+    //echo $SQL_sentence;
+    
     if($dataSet){
         //var_dump($dataSet);
         echo json_encode($dataSet);
