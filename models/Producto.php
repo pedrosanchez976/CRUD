@@ -13,7 +13,8 @@ CREATE TABLE tm_producto
     class Producto extends Conectar{
         //protected $SELECT_todo = "SELECT * FROM tm_producto";
         //private $SELECT_todo = "SELECT prod_id, prod_nom, fech_crea, fech_modi, fech_elim, est FROM tm_producto";
-        private $SELECT_todo = "SELECT prod_id, prod_nom, fech_crea as fehoCreacion FROM tm_producto";
+       
+        private $SELECT_todo = "SELECT prod_id, prod_nom, fech_crea, fech_modi, fech_elim, est FROM tm_producto";
         private $SELECT_x_id = "SELECT prod_id, prod_nom, fech_crea, fech_modi, fech_elim, est FROM tm_producto WHERE prod_id = ?";
         private $SELECT_x_nom = "SELECT prod_id, prod_nom, fech_crea, fech_modi, fech_elim, est FROM tm_producto WHERE prod_nom = ?";
         private $INSERT_x_nom = "INSERT INTO tm_producto (prod_id, prod_nom, fech_crea, fech_modi, fech_elim, est) VALUES (NULL, ?, current_timestamp, NULL, NULL, 1);";
@@ -32,11 +33,12 @@ var_dump($array);*/
             //$db= parent::conexion();
             $db= $this->conexion();
             $Q=ibase_query($db, $this->SELECT_todo);//"SELECT * FROM tm_producto";
-            echo 'generarMetadataQuery'; 
-            $aux=parent::generarMetadataQuery($Q);
-            var_dump($aux);
-            echo json_encode($aux); //{"nCampos":3,"campos":["PROD_ID","PROD_NOM","FECH_CREA"],"tipos":["INTEGER","VARCHAR","TIMESTAMP"]}
-
+/* debug 
+echo 'generarMetadataQuery'; 
+$aux=parent::generarMetadataQuery($Q);
+var_dump($aux);
+echo json_encode($aux); //{"nCampos":3,"campos":["PROD_ID","PROD_NOM","FECH_CREA"],"tipos":["INTEGER","VARCHAR","TIMESTAMP"]}
+*/
             return  parent::generarDataset($Q);// array de objetos o de arrays
             //$this->cerrarConexion(); NO PARECE NECESARIO
         }

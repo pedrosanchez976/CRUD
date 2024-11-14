@@ -4,42 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>test</title>
+    <script src="./Ajax.js"></script>
+    <script>
+        function pedirDatos(){
+            //console.log("pedirDatos");
+            var error=peticionAjax("POST",'http://192.168.1.20/crud/view/home/pedirDatos.php', cb, null, true, "pedro", "Silvia_976");
+        }
+
+        function cb(Lxhr){
+            try {
+                console.log('response status= '+ Lxhr.status) ;
+                
+                if(Lxhr.status == 200){
+                    document.getElementById("divRecepcion").innerHTML=Lxhr.responseText;
+                    /*var datos=JSON.parse(Lxhr.responseText);
+                    var url_=datos.datos;
+                    //var error=peticionAjax("GET", url_ , callBack_, null, true, null, null);
+                    var error=peticionAjax("GET", url_ , callBack_);
+                    if(error) console.log( 'peticionAjax 2 ERROR: '+ error);*/
+                }
+                else{
+                    //console.log('response status= '+ Lxhr.status) ;
+                }
+                
+            } catch (err) {
+                    console.log('ERROR funcion cb(Lxhr): '+ err );
+            }
+        }
+    </script>
     
 </head>
 <body>
     
-    <?php
-    require_once("../../config/conexion.php"); 
-    require_once("../../Models/Producto.php"); 
-    
-    $tbProducto=new Producto();
-    $serverData=$tbProducto->serverinfo();
-    echo "serverData: ";
-    var_dump($serverData);
-    echo json_encode($serverData);
+<button onclick=pedirDatos();>pedir datos</button>
+<h2>DATOS RECIBIDOS:</h2>
+<div id="divRecepcion"></div>
 
-    $prod_id=2;
-    $prod_nom='otro2eeee';
-    $dataSet=$tbProducto->get_producto();
-    //$dataSet=$tbProducto->get_producto_x_id($prod_id);
-    //$dataSet= $tbProducto->get_producto_x_nom($prod_nom);
-    //$dataSet=$tbProducto->insert_producto($prod_nom);
-   //$dataSet= $tbProducto->update_producto($prod_id,$prod_nom);  // resultado= 1
-   //$dataSet= $tbProducto->delete_producto($prod_id);  // resultado= 1
-   //echo($dataSet); 
-
-    if($dataSet){
-        var_dump($dataSet);
-        echo json_encode($dataSet);
-
-    }
-    else
-    echo utf8_encode('no hay registros'); // NOMBRE DEL CAMPO SENSIBLE A MAYUSCULAS
- /**/
-
-    //$tbProducto->cerrarConexion();
-
-    ?>
-    
+ 
 </body>
 </html>

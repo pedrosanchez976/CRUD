@@ -30,16 +30,6 @@
             }	
         }
 
-        protected function generarDataset($Q){
-            $dataSet=[];//=Array();  será un array de arrays o de objetos
-
-            //while ($R = ibase_fetch_row   ($Q))   // ibase_fetch_row devuelve array indexado, solo los valores, no aparece nombre de los campos $R[0]  [[1,"producto1","2024-11-13 12:19:34"],[2,"producto2","2024-11-13 23:04:41"]]
-			//while ($R = ibase_fetch_assoc ($Q))   // ibase_fetch_assoc devuelve array asociativo: con acceso no por indice sino propiedad cualificado, como un objeto...:  $R['PROD_NOM']     [{"PROD_ID":1,"PROD_NOM":"producto1","FECH_CREA":"2024-11-13 12:19:34"},{"PROD_ID":2,"PROD_NOM":"producto2","FECH_CREA":"2024-11-13 23:04:41"}]
-			while ($R = ibase_fetch_object($Q))   // ibase_fetch_object devuelve objetos, (stdClass)...:  $R->PROD_NOM                                    [{"PROD_ID":1,"PROD_NOM":"producto1","FECH_CREA":"2024-11-13 12:19:34"},{"PROD_ID":2,"PROD_NOM":"producto2","FECH_CREA":"2024-11-13 23:04:41"}]
-                $dataSet[]=$R;
-
-            return $dataSet;// array de arrays o de objetos
-        }    
 
 
         public function serverinfo(){
@@ -63,7 +53,8 @@
         
             }
             return $serverData;
-/*
+        }//serverinfo()
+/*serverinfo
 $serverData----------------------------------
 {"version":"WI-V2.1.7.18553 Firebird 2.1","implementation":"Firebird\/x86-64\/Windows NT","users":[{"user_name":"SYSDBA","first_name":"Sql","middle_name":"Server","last_name":"Administrator","user_id":0,"group_id":0}],"directory":"C:\\Program Files\\Firebird\\Firebird_2_1\\","lockPath":"C:\\Program Files\\Firebird\\Firebird_2_1\\","libPath":"C:\\Program Files\\Firebird\\Firebird_2_1\\","userdbPath":"C:\\Program Files\\Firebird\\Firebird_2_1\\security2.fdb","establishedConnections":{"attachments":1,"databases":1,"0":"D:\\MOVIALNORTE\\TELEVISORES\\DBS\\HOSPITALES.FDB"}}
 
@@ -94,65 +85,20 @@ array (size=8)
 {"version":"WI-V2.1.7.18553 Firebird 2.1","implementation":"Firebird\/x86-64\/Windows NT","users":"Array\n(\n [0] => Array\n (\n [user_name] => SYSDBA\n [first_name] => Sql\n [middle_name] => Server\n [last_name] => Administrator\n [user_id] => 0\n [group_id] => 0\n )\n\n)\n","directory":"C:\\Program Files\\Firebird\\Firebird_2_1\\","lockPath":"C:\\Program Files\\Firebird\\Firebird_2_1\\","libPath":"C:\\Program Files\\Firebird\\Firebird_2_1\\","userdbPath":"C:\\Program Files\\Firebird\\Firebird_2_1\\security2.fdb","establishedConnections":"Array\n(\n [attachments] => 1\n [databases] => 1\n [0] => D:\\MOVIALNORTE\\TELEVISORES\\DBS\\HOSPITALES.FDB\n)\n"}
 */
 
-        }//serverinfo()
 
 
-        protected function generarMetadataQuery($Q){
-            //$Q = ibase_query("SELECT * FROM tablename");
-            $metadatos=[];
-            $coln = ibase_num_fields($Q); //ibase_num_params
-            $metadatos["nCampos"]=$coln;
+        protected function generarDataset($Q){
+            $dataSet=[];//=Array();  será un array de arrays o de objetos
 
-        
-            $col_info=[];
-            $campos=[];
-            $tipos=[];
-            $alias=[];
-            $relation=[];
-            for ($i = 0; $i < $coln; $i++) {
-                $col_info = ibase_field_info($Q, $i);//ibase_param_info  Return the number of parameters in a prepared query
-                $campos[]=$col_info['name'];
-                $tipos[]=$col_info['type'].":".$col_info['length']; // length en bytes
-                $alias[]=$col_info['alias']; // si se ha accedido a un campo con un alias::  "SELECT fech_crea as fehoCreacion from ..."
-                $relation[]=$col_info['relation']; // si es un join, nos dice la tabla de la que se extrajo información para este campo concreto
-            }
-            $metadatos["campos"]=$campos;
-            $metadatos["tipos"]=$tipos;
-            $metadatos["alias"]=$alias;
-            $metadatos["relation"]=$relation;
-            return $metadatos;
-            //{"nCampos":3,"campos":["PROD_ID","PROD_NOM","FECH_CREA"],"tipos":["INTEGER:4","VARCHAR:100","TIMESTAMP:8"],"alias":["PROD_ID","PROD_NOM","FEHOCREACION"],"relation":["TM_PRODUCTO","TM_PRODUCTO","TM_PRODUCTO"]}
-        }
-    }
-    /*
+            //while ($R = ibase_fetch_row   ($Q))   // ibase_fetch_row devuelve array indexado, solo los valores, no aparece nombre de los campos $R[0]  [[1,"producto1","2024-11-13 12:19:34"],[2,"producto2","2024-11-13 23:04:41"]]
+			while ($R = ibase_fetch_assoc ($Q))   // ibase_fetch_assoc devuelve array asociativo: con acceso no por indice sino propiedad cualificado, como un objeto...:  $R['PROD_NOM']     [{"PROD_ID":1,"PROD_NOM":"producto1","FECH_CREA":"2024-11-13 12:19:34"},{"PROD_ID":2,"PROD_NOM":"producto2","FECH_CREA":"2024-11-13 23:04:41"}]
+			//while ($R = ibase_fetch_object($Q))   // ibase_fetch_object devuelve objetos, (stdClass)...:  $R->PROD_NOM                                    [{"PROD_ID":1,"PROD_NOM":"producto1","FECH_CREA":"2024-11-13 12:19:34"},{"PROD_ID":2,"PROD_NOM":"producto2","FECH_CREA":"2024-11-13 23:04:41"}]
+                $dataSet[]=$R;
 
-{
-    "fehoGeneracion":"14/11/2024, 11:48:41:504",
-    "fehoPeticion":"14/11/2024, 11:48:40:885",
-    "user":"pedro",
-    "descripcion":"respuesta SQL para user pedro",
-    "hospital":"111-Cruces Bilbao-Bilbao",
-    "sql":"select idHabitacion, IP from habitaciones",
-    "exito":true,
-    "nCampos":2,
-    "nRegistros":695,
-    "campos":["IDHABITACION","IP"],
-    "tipos":["string:10","string:100"],
-    "datos":[
-        ["M08","192.168.1.31"],
-        ["121-1","192.168.1.55"],
-        ...
-    ]
-}
-
-
-
-
-
-
-
+            return $dataSet;// array de arrays o de objetos
+        }    
+/*
 RESULTADO DE function generarDataset
-
 ---------------------------------------------
 ---------------ibase_fetch_row---------------    
     array (size=2)
@@ -206,4 +152,65 @@ array (size=2)
 json_encode::::::::::::::::::::::
 [{"PROD_ID":1,"PROD_NOM":"producto1","FECH_CREA":"2024-11-13 12:19:34"},{"PROD_ID":2,"PROD_NOM":"producto2","FECH_CREA":"2024-11-13 23:04:41"}]
     */
+
+        protected function generarMetadataQuery($Q){
+            //$Q = ibase_query("SELECT * FROM tablename");
+            $metadatos=[];
+            $coln = ibase_num_fields($Q); //ibase_num_params
+           // $metadatos["fehoGeneracion"]=now();
+            $metadatos["nCampos"]=$coln;
+
+        
+            //$col_info=[];
+            $campos=[];
+            $tipos=[];
+            $alias=[];
+            $relation=[];
+            for ($i = 0; $i < $coln; $i++) {
+                $col_info = ibase_field_info($Q, $i);//ibase_param_info  Return the number of parameters in a prepared query
+                $campos[]=$col_info['name'];
+                $tipos[]=$col_info['type'].":".$col_info['length']; // length en bytes
+                $alias[]=$col_info['alias']; // si se ha accedido a un campo con un alias::  "SELECT fech_crea as fehoCreacion from ..."
+                $relation[]=$col_info['relation']; // si es un join, nos dice la tabla de la que se extrajo información para este campo concreto
+            }
+            $metadatos["campos"]=$campos;
+            $metadatos["tipos"]=$tipos;
+            $metadatos["alias"]=$alias;
+            $metadatos["relation"]=$relation;
+            return $metadatos;
+            /*$metadatos:
+            {
+                "nCampos":3,
+                "campos":["PROD_ID","PROD_NOM","FECH_CREA"],
+                "tipos":["INTEGER:4","VARCHAR:100","TIMESTAMP:8"],
+                "alias":["PROD_ID","PROD_NOM","FEHOCREACION"],
+                "relation":["TM_PRODUCTO","TM_PRODUCTO","TM_PRODUCTO"]
+            }*/
+        }
+    }
+    /*
+{
+    "fehoGeneracion":"14/11/2024, 11:48:41:504",
+    "fehoPeticion":"14/11/2024, 11:48:40:885",
+    "user":"pedro",
+    "descripcion":"respuesta SQL para user pedro",
+    "hospital":"111-Cruces Bilbao-Bilbao",
+    "sql":"select idHabitacion, IP from habitaciones",
+    "exito":true,
+
+    "nCampos":2,
+    "campos":["IDHABITACION","IP"],
+    "tipos":["string:10","string:100"],
+
+    
+    "nRegistros":695,
+    "datos":[
+        ["M08","192.168.1.31"],
+        ["121-1","192.168.1.55"],
+        ...
+    ]
+}
+*/
+
+
 ?>
