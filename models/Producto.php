@@ -11,33 +11,52 @@ CREATE TABLE tm_producto
     
 ); */
     class Producto extends Conectar{
-        protected $SELECT_todo = "SELECT * FROM tm_producto";
-        protected $SELECT_x_id = "SELECT * FROM tm_producto WHERE prod_id = ?";
-        protected $SELECT_x_nom = "SELECT * FROM tm_producto WHERE prod_nom = ?";
-        protected $INSERT_x_nom = "INSERT INTO tm_producto (prod_id, prod_nom, fech_crea, fech_modi, fech_elim, est) VALUES (NULL, ?, current_timestamp, NULL, NULL, 1);";
-        protected $UPDATE_x_id = "UPDATE tm_producto SET prod_nom=?, fech_modi=current_timestamp WHERE prod_id = ?";
+        //protected $SELECT_todo = "SELECT * FROM tm_producto";
+        //private $SELECT_todo = "SELECT prod_id, prod_nom, fech_crea, fech_modi, fech_elim, est FROM tm_producto";
+        private $SELECT_todo = "SELECT prod_id, prod_nom, fech_crea as fehoCreacion FROM tm_producto";
+        private $SELECT_x_id = "SELECT prod_id, prod_nom, fech_crea, fech_modi, fech_elim, est FROM tm_producto WHERE prod_id = ?";
+        private $SELECT_x_nom = "SELECT prod_id, prod_nom, fech_crea, fech_modi, fech_elim, est FROM tm_producto WHERE prod_nom = ?";
+        private $INSERT_x_nom = "INSERT INTO tm_producto (prod_id, prod_nom, fech_crea, fech_modi, fech_elim, est) VALUES (NULL, ?, current_timestamp, NULL, NULL, 1);";
+        private $UPDATE_x_id = "UPDATE tm_producto SET prod_nom=?, fech_modi=current_timestamp WHERE prod_id = ?";
 
-        protected $Q;
+        private $Q;
+
+    
+        
+/*
+CONVERTIR OBJETO A ARRAY
+$array = (array)$object;
+var_dump($array);*/
 
         public function get_producto(){
-            $db= parent::conexion();
-            //$sql=$this->SELECT_todo;//"SELECT * FROM tm_producto";  
-            return $Q=ibase_query($db, $this->SELECT_todo);
+            //$db= parent::conexion();
+            $db= $this->conexion();
+            $Q=ibase_query($db, $this->SELECT_todo);//"SELECT * FROM tm_producto";
+            echo 'generarMetadataQuery'; 
+            $aux=parent::generarMetadataQuery($Q);
+            var_dump($aux);
+            echo json_encode($aux); //{"nCampos":3,"campos":["PROD_ID","PROD_NOM","FECH_CREA"],"tipos":["INTEGER","VARCHAR","TIMESTAMP"]}
+
+            return  parent::generarDataset($Q);// array de objetos o de arrays
+            //$this->cerrarConexion(); NO PARECE NECESARIO
         }
 
+        //get_object_vars(object $object): array   Obtiene las propiedades no estáticas accesibles del objeto dado por object según el ámbito.
 
         public function get_producto_x_id($prod_id){
             $db= parent::conexion();
             //$sql="SELECT * FROM tm_producto WHERE prod_id = ?";
             $prepareQ = ibase_prepare($db, $this->SELECT_x_id);  
-            return $Q=ibase_execute($prepareQ, $prod_id);// sustituye la ? del query por $prod_id
+            $Q=ibase_execute($prepareQ, $prod_id);// sustituye la ? del query por $prod_id
+            return  $this->generarDataset($Q);// array de objetos o de arrays
         }
 
         public function get_producto_x_nom($prod_nom){
             $db= parent::conexion();
             //$sql="SELECT * FROM tm_producto WHERE prod_id = ?";
             $prepareQ = ibase_prepare($db, $this->SELECT_x_nom);  
-            return $Q=ibase_execute($prepareQ, $prod_nom);// sustituye la ? del query por $prod_id
+            $Q=ibase_execute($prepareQ, $prod_nom);// sustituye la ? del query por $prod_id
+            return  $this->generarDataset($Q);// array de objetos o de arrays
         }
         
         public function insert_producto($prod_nom){
@@ -82,21 +101,11 @@ CREATE TABLE tm_producto
 
 
         public function delete_producto($prod_id){
-            $conectar= parent::conexion();
-            $sql="UPDATE tm_producto
-                SET
-                    est=0,
-                    fech_elim=current_timestamp
-                WHERE
-                    prod_id = ?";
+            $db= parent::conexion();
+            $sql="DELETE FROM tm_producto 
+                WHERE prod_id = ?";
             $prepareQ = ibase_prepare($db, $sql);  
-            ibase_execute($prepareQ, $prod_id);// sustituye la ? del query por $prod_id
-
-
-            $sql=$conectar->prepare($sql);
-            $sql->bindValue(1,$prod_id);
-            $sql->execute();
-            return $resultado=$sql->fetchAll();
+            return ibase_execute($prepareQ, $prod_id);// sustituye la ? del query por $prod_id
         }
 
         public function delete_producto_backup($prod_id){
@@ -115,12 +124,12 @@ CREATE TABLE tm_producto
         }
 
 
-        public function cerrarConexion(){
-            parent::desconectar();
+        private function cerrarConexion(){
             if($this->Q){
                 ibase_free_result($this->Q); 
                 ibase_free_query($this->Q);
             }	
+            parent::desconectar();
         }
 
 

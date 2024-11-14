@@ -678,6 +678,7 @@
 
     <!-- ########## START: MAIN PANEL ########## -->
     <div class="br-mainpanel">
+
       <div class="br-pageheader pd-y-15 pd-l-20">
         <nav class="breadcrumb pd-0 mg-0 tx-12">
           <a class="breadcrumb-item" href="index.html">Mantenimiento</a>
@@ -728,7 +729,6 @@
 
     <script src="../../public/lib/datatables/jquery.dataTables.js"></script>
     <script src="../../public/lib/datatables-responsive/dataTables.responsive.js"></script>
-
     <script src="../../public/datatables/dataTables.buttons.min.js"></script>
     <script src="../../public/datatables/buttons.html5.min.js"></script>
     <script src="../../public/datatables/buttons.colVis.min.js"></script>
