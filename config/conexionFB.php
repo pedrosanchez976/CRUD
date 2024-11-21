@@ -1,7 +1,7 @@
 <?php
     class conexionFB{
       /*
-       protected function __constructor()
+       protected function __construct()
        protected function conectar()
        protected function desconectar()
        protected function generarMetadataQuery($Q)
@@ -52,29 +52,29 @@
 
 
 
-      public function executeSQL($SQL_sentence){
-        try{
-          //$db= parent::conectar();
-          //$db= $this->conectar();
-          $db=ibase_connect($this->dbUrl, $this->dbusuario, $this->dbpassword);	
-          $Q=ibase_query($db, $SQL_sentence);//"SELECT * FROM tm_producto";
+        public function executeSQL($SQL_sentence){
+          try{
+            //$db= parent::conectar();
+            //$db= $this->conectar();
+            $db=ibase_connect($this->dbUrl, $this->dbusuario, $this->dbpassword);	
+            $Q=ibase_query($db, $SQL_sentence);//"SELECT * FROM tm_producto";
 
-          while ($R=ibase_fetch_row($Q))   // ibase_fetch_row devuelve array indexado, solo los valores, no aparece nombre de los campos $R[0]  [[1,"producto1","2024-11-13 12:19:34"],[2,"producto2","2024-11-13 23:04:41"]]
-          //while ($R = ibase_fetch_assoc ($Q))   // ibase_fetch_assoc devuelve array asociativo: con acceso no por indice sino propiedad cualificado, como un objeto...:  $R['PROD_NOM']     [{"PROD_ID":1,"PROD_NOM":"producto1","FECH_CREA":"2024-11-13 12:19:34"},{"PROD_ID":2,"PROD_NOM":"producto2","FECH_CREA":"2024-11-13 23:04:41"}]
-          //while ($R = ibase_fetch_object($Q))   // ibase_fetch_object devuelve objetos, (stdClass)...:  $R->PROD_NOM                                    [{"PROD_ID":1,"PROD_NOM":"producto1","FECH_CREA":"2024-11-13 12:19:34"},{"PROD_ID":2,"PROD_NOM":"producto2","FECH_CREA":"2024-11-13 23:04:41"}]
-              $dataSet[]=$R;
+            while ($R=ibase_fetch_row($Q))   // ibase_fetch_row devuelve array indexado, solo los valores, no aparece nombre de los campos $R[0]  [[1,"producto1","2024-11-13 12:19:34"],[2,"producto2","2024-11-13 23:04:41"]]
+            //while ($R = ibase_fetch_assoc ($Q))   // ibase_fetch_assoc devuelve array asociativo: con acceso no por indice sino propiedad cualificado, como un objeto...:  $R['PROD_NOM']     [{"PROD_ID":1,"PROD_NOM":"producto1","FECH_CREA":"2024-11-13 12:19:34"},{"PROD_ID":2,"PROD_NOM":"producto2","FECH_CREA":"2024-11-13 23:04:41"}]
+            //while ($R = ibase_fetch_object($Q))   // ibase_fetch_object devuelve objetos, (stdClass)...:  $R->PROD_NOM                                    [{"PROD_ID":1,"PROD_NOM":"producto1","FECH_CREA":"2024-11-13 12:19:34"},{"PROD_ID":2,"PROD_NOM":"producto2","FECH_CREA":"2024-11-13 23:04:41"}]
+                $dataSet[]=$R;
 
-          return  $dataSet;// array de objetos o de arrays
-          /* CON METADATOS DEL QUERY
-          $metadataDb=$this->generarMetadataQuery($Q);
-          $metadataDb["datos"]=$dataSet;
-          return  $metadataDb;// array de objetos o de arrays*/
-          
-          //$this->cerrarConexion(); NO PARECE NECESARIO
-        }catch(Exception $e){
-          return "ERROR: conexionFB:function executeSQL(): " . $e->getMessage() ;
+            //return  $dataSet;// array de objetos o de arrays
+            /* CON METADATOS DEL QUERY*/
+            $metadataDb=$this->generarMetadataQuery($Q);
+            $metadataDb["datos"]=$dataSet;
+            return  $metadataDb;// array de objetos o de arrays
+            
+            //$this->cerrarConexion(); NO PARECE NECESARIO
+          }catch(Exception $e){
+            return "ERROR: conexionFB:function executeSQL(): " . $e->getMessage() ;
+          }
         }
-      }
 /*
     protected function generarDataset($Q){
         $dataSet=[];//=Array();  será un array de arrays o de objetos
@@ -278,8 +278,8 @@ function ejecutar(){
 
     if (! empty($_REQUEST['query']))
     if (! empty($_REQUEST['db'])){
-      //$SQL_sentence=htmlspecialchars($_REQUEST['query']);// htmlspecialchars($_GET["name"])
-      $SQL_sentence=$_REQUEST['query'];// htmlspecialchars($_GET["name"])
+        //$SQL_sentence=htmlspecialchars($_REQUEST['query']);// htmlspecialchars($_GET["name"])
+        $SQL_sentence=$_REQUEST['query'];// htmlspecialchars($_GET["name"])
         //$peticion=new conexionFB('localhost/3050:D:/movialnorte/Televisores/DBs/hospitales.fdb', null, null);
         $peticion=new conexionFB($_REQUEST['db'], null, null);
         if(isset($peticion))
@@ -295,7 +295,7 @@ function ejecutar(){
 
     header('Content-Type: application/json');
   }catch(Exception $e){
-    return "ERROR: conexionFB:function generarMetadataQuery(): " . $e->getMessage() ;
+    return "ERROR: conexionFB.php:function ejecutar(): " . $e->getMessage() ;
   }finally{}
 
 };

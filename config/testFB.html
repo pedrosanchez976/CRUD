@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test</title>
+    
+    <!--
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css">
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+    -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css" />
+    
+
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+
+
+    <script src="Ajax.js"></script>
+
+    <script>
+//https://psh.sytes.net/crud/config/conexionFB.php?query=SELECT * FROM HOSPITALES WHERE idhospital in (3,5,6)&db=serviciowebtv.sytes.net/3050:c:/tv/hospitales.fdb
+        var url="https://psh.sytes.net/crud/config/conexionFB.php";
+        var urlServerFB="serviciowebtv.sytes.net/3050:c:/tv/hospitales.fdb";
+        var query="SELECT * FROM HOSPITALES WHERE idhospital in (3,5,6)";
+        //var query="SELECT a.PROD_ID, a.PROD_NOM, a.EST, a.FECH_CREA, a.FECH_MODI, a.FECH_ELIM FROM TM_PRODUCTO a";
+        function pedirDatos(){
+            peticionAjax("POST",url, cb, `query=${query}&db=${urlServerFB}`, true, "pedro", "Silvia_976");
+        }
+        function cb(Lxhr){
+            try {
+                console.log('response status= '+ Lxhr.status) ;
+                //console.log('response responseText= '+ Lxhr.responseText) ;
+                
+                if(Lxhr.status == 200){
+                    document.getElementById("divRecepcion").innerHTML=Lxhr.responseText;
+                    aaa=JSON.parse(Lxhr.responseText);
+                    generarTablaHtml_simple(aaa);
+                }
+                else{
+                    //console.log('response status= '+ Lxhr.status) ;
+                }
+                
+            } catch (err) {
+                    console.log('ERROR funcion cb(Lxhr): '+ err );
+            }
+        }
+
+        function onload(){
+            //let table = new DataTable('#myTable');
+            //$('#myTable').DataTable();
+            //document.getElementById("myTable").style.display='';
+
+            pedirDatos();
+        }
+
+
+        
+        function generarTablaHtml_simple(datos_){
+             /* 
+             datos_=:
+            {
+                "nCampos":3,
+                "campos":["PROD_ID","PROD_NOM","FECH_CREA"],
+                "tipos":["INTEGER:4","VARCHAR:100","TIMESTAMP:8"],
+                "alias":["PROD_ID","PROD_NOM","FEHOCREACION"],
+                "relation":["TM_PRODUCTO","TM_PRODUCTO","TM_PRODUCTO"],
+                datos:[[1,"producto1","28/12/2023, 12:00"],[2,"producto2","28/12/2023, 12:01"]]
+            }*/
+
+            var tabla_="";
+            var cabecera_="";
+            var cuerpo_="";
+
+        //generar cabecera ------------------------------------------
+            cabecera_="<tr>";
+            datos_.campos.forEach( (Ltitulo,index) => cabecera_+=`<th index=${index}>${Ltitulo}</th>` );
+            cabecera_+="</tr>";
+
+        //generar cuerpo ------------------------------------------
+            cuerpo_="";
+            datos_.datos.forEach( (Lregistro,index) => {
+                let registro_=`<tr index=${index}>`;
+                Lregistro.forEach( (Ldato) => {
+                    registro_+=`<td>${Ldato}</td>`;
+                } );
+                registro_+="</tr>";
+                cuerpo_+=registro_;
+            });
+
+            tabla_=`<thead>${cabecera_}</thead><tbody>${cuerpo_}</tbody>`;
+            document.getElementById("myTable").innerHTML=tabla_;
+            //$('#myTable').DataTable();
+            document.getElementById("myTable").style.display='';
+        } // function generarTablaHtml
+
+
+        function generarTablaHtml(datos_){
+            new DataTable('#myTable');
+            //new DataTable('#myTable', {data:datos_.datos, columns:columns});
+
+            //new DataTable('#myTable', {ajax:`${query}&db=${urlServerFB}`});
+        } // function generarTablaHtml
+        function generarDtaTableAjax(){
+            new DataTable('#myTable', {ajax:`${url}?db=${urlServerFB}&query=${query}`});
+            //https://psh.sytes.net/crud/config/conexionFB.php?query=SELECT * FROM HOSPITALES WHERE idhospital in (3,5,6)&db=serviciowebtv.sytes.net/3050:c:/tv/hospitales.fdb
+
+        }
+
+
+        var columns= [
+            { title: 'Name' },
+            { title: 'Position' },
+            { title: 'Office' },
+            { title: 'Extn.' },
+            { title: 'Start date' },
+            { title: 'Salary' }
+        ];
+   
+
+        var aaa={
+            "nCampos":6,
+            "campos":["PROD_ID","PROD_NOM","EST","FECH_CREA","FECH_MODI","FECH_ELIM"],
+            "tipos":["INTEGER:4","VARCHAR:100","INTEGER:4","TIMESTAMP:8","TIMESTAMP:8","TIMESTAMP:8"],
+            "alias":["PROD_ID","PROD_NOM","EST","FECH_CREA","FECH_MODI","FECH_ELIM"],
+            "relation":["TM_PRODUCTO","TM_PRODUCTO","TM_PRODUCTO","TM_PRODUCTO","TM_PRODUCTO","TM_PRODUCTO"],
+            "datos":[
+                [1,"producto1",1,"2024-11-13 12:19:34","2024-11-13 19:13:21",null],
+                [2,"producto2",1,"2024-11-13 23:04:41","asdffadf","hola null"],
+                [1,"producto1",1,"2024-11-13 12:19:34","2024-11-13 19:13:21",null],
+                [2,"producto2",1,"2024-11-13 23:04:41","asdffadf","hola null"],
+                [1,"producto1",1,"2024-11-13 12:19:34","2024-11-13 19:13:21",null],
+                [2,"producto2",1,"2024-11-13 23:04:41","asdffadf","hola null"],
+                [1,"producto1",1,"2024-11-13 12:19:34","2024-11-13 19:13:21",null],
+                [2,"producto2",1,"2024-11-13 23:04:41","asdffadf","hola null"],
+                [1,"producto1",1,"2024-11-13 12:19:34","2024-11-13 19:13:21",null],
+                [2,"producto2",1,"2024-11-13 23:04:41","asdffadf","hola null"],
+                [1,"producto1",1,"2024-11-13 12:19:34","2024-11-13 19:13:21",null],
+                [2,"producto2",1,"2024-11-13 23:04:41","asdffadf","hola null"],
+                [1,"producto1",1,"2024-11-13 12:19:34","2024-11-13 19:13:21",null],
+                [2,"producto2",1,"2024-11-13 23:04:41","asdffadf","hola null"],
+            ]
+        };
+
+
+    </script>
+    
+</head>
+<body onload="onload();">
+    
+<button onclick=pedirDatos();>pedir datos</button>
+<button onclick=generarDtaTableAjax();>generarDtaTableAjax</button>
+<h2>DATOS RECIBIDOS:</h2>
+<div id="divRecepcion"></div>
+
+
+<table id="myTable" class="stripe" style="width:100%">
+
+   <!--
+    <thead>
+        <tr> <th index=0>Column 1</th> </tr>
+    </thead>
+    <tbody>
+        <tr> <td>Row 1 Data 1</td> </tr>
+    </tbody>--> 
+</table>
+ 
+</body>
+</html>
