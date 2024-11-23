@@ -104,13 +104,12 @@ function onError(e) {
         };
        //xhr.open("GET", _AEMET_ + aemet_inventarioEstaciones+"?api_key="+_APIKey_);
        //open(method: string, url: string | URL, async: boolean, username?: string | null, password?: string | null): void;
-       //xhr.open("GET", Lurl, Lasync, Lusername, Lpassword);
        xhr.open(Lmetodo, Lurl, Lasync, Lusername, Lpassword);
        // AQUI LAS CABECERAS NECESARIAS ------------------------
        if(Ldata)
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
        //xhr.setRequestHeader("cache-control", "no-cache");
-       //xhr.setRequestHeader("cache-control", "no-cache");
+       //xhr.setRequestHeader('Authorization', 'Basic ' + btoa("pedro:Silvia_976"));
        xhr.send(Ldata);
 
 /*

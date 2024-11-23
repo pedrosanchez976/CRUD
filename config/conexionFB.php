@@ -1,4 +1,6 @@
 <?php
+//https://psh.sytes.net/crud/config/conexionFB.php?query=SELECT * FROM HOSPITALES WHERE idhospital=3&db=serviciowebtv.sytes.net/3050:c:/tv/hospitales.fdb&dbuser=xxx&dbpassword=xxx
+  
     class conexionFB{
       /*
        protected function __construct()
@@ -9,19 +11,20 @@
        public function executeSQL($SQL_sentence)
        public function serverinfo()
       */
-        protected $dbh; // el objeto db fb
-        protected $dbusuario="SYSDBA";
+        //protected $dbh; // el objeto db fb
+        protected $dbuser="SYSDBA";
         protected $dbpassword="hola";
-        protected $serverFB = 'localhost/3050';
-        //protected $dbUrl = 'localhost/3050:D:/movialnorte/Televisores/DBs/hospitales.fdb';
-        protected $dbUrl = 'serviciowebtv.sytes.net/3050:c:/tv/hospitales.fdb';
+        protected $dbUrl = "serviciowebtv.sytes.net/3050:c:/tv/hospitales.fdb";
+        //protected $dbUrl = "localhost/3050:D:/movialnorte/Televisores/DBs/hospitales.fdb";
 
-        public function __construct($dbUrl_, $dbusuario_, $dbpassword_){
+        protected $serverFB = "serviciowebtv.sytes.net/3050";
+
+        public function __construct($dbUrl_, $dbuser_, $dbpassword_){
           try{
           //
-            if(isset($dbUrl_))      $this->dbUrl=$dbUrl_;
-            if(isset($dbusuario_))  $this->dbusuario=$dbusuario_;
-            if(isset($dbpassword_)) $this->dbpassword=$dbpassword_;
+            if($dbUrl_)      $this->dbUrl=$dbUrl_;
+            if($dbuser_)  $this->dbuser=$dbuser_;
+            if($dbpassword_) $this->dbpassword=$dbpassword_;
 
           }catch(Exception $e){
             return "ERROR: conexionFB:function __constructor(): " . $e->getMessage() ;
@@ -31,12 +34,12 @@
         protected function conectar(){
             try{
                 //$conectar = $this->dbh = new PDO("mysql:local=localhost;dbname=crud2","root","");
-                return $this->dbh=ibase_connect($this->dbUrl, $this->dbusuario, $this->dbpassword);	
+                return $this->dbh=ibase_connect($this->dbUrl, $this->dbuser, $this->dbpassword);	
             }catch(Exception $e){
               return "ERROR: conexionFB:function conectar(): " . $e->getMessage() ;
             }
         }
-*/
+
         protected function desconectar(){
 			
           try{
@@ -49,22 +52,22 @@
             return "ERROR: conexionFB:function desconectar(): " . $e->getMessage() ;
           }
         }
-
+*/
 
 
         public function executeSQL($SQL_sentence){
           try{
             //$db= parent::conectar();
             //$db= $this->conectar();
-            $db=ibase_connect($this->dbUrl, $this->dbusuario, $this->dbpassword);	
+            $db=ibase_connect($this->dbUrl, $this->dbuser, $this->dbpassword);	
             $Q=ibase_query($db, $SQL_sentence);//"SELECT * FROM tm_producto";
+            //$dataSet=$Q->fetchAll();
 
             while ($R=ibase_fetch_row($Q))   // ibase_fetch_row devuelve array indexado, solo los valores, no aparece nombre de los campos $R[0]  [[1,"producto1","2024-11-13 12:19:34"],[2,"producto2","2024-11-13 23:04:41"]]
             //while ($R = ibase_fetch_assoc ($Q))   // ibase_fetch_assoc devuelve array asociativo: con acceso no por indice sino propiedad cualificado, como un objeto...:  $R['PROD_NOM']     [{"PROD_ID":1,"PROD_NOM":"producto1","FECH_CREA":"2024-11-13 12:19:34"},{"PROD_ID":2,"PROD_NOM":"producto2","FECH_CREA":"2024-11-13 23:04:41"}]
             //while ($R = ibase_fetch_object($Q))   // ibase_fetch_object devuelve objetos, (stdClass)...:  $R->PROD_NOM                                    [{"PROD_ID":1,"PROD_NOM":"producto1","FECH_CREA":"2024-11-13 12:19:34"},{"PROD_ID":2,"PROD_NOM":"producto2","FECH_CREA":"2024-11-13 23:04:41"}]
                 $dataSet[]=$R;
 
-            //return  $dataSet;// array de objetos o de arrays
             /* CON METADATOS DEL QUERY*/
             $metadataDb=$this->generarMetadataQuery($Q);
             $metadataDb["datos"]=$dataSet;
@@ -75,25 +78,6 @@
             return "ERROR: conexionFB:function executeSQL(): " . $e->getMessage() ;
           }
         }
-/*
-    protected function generarDataset($Q){
-        $dataSet=[];//=Array();  será un array de arrays o de objetos
-
-        try {
-          //while ($R = ibase_fetch_row   ($Q))   // ibase_fetch_row devuelve array indexado, solo los valores, no aparece nombre de los campos $R[0]  [[1,"producto1","2024-11-13 12:19:34"],[2,"producto2","2024-11-13 23:04:41"]]
-          while ($R = ibase_fetch_assoc ($Q))   // ibase_fetch_assoc devuelve array asociativo: con acceso no por indice sino propiedad cualificado, como un objeto...:  $R['PROD_NOM']     [{"PROD_ID":1,"PROD_NOM":"producto1","FECH_CREA":"2024-11-13 12:19:34"},{"PROD_ID":2,"PROD_NOM":"producto2","FECH_CREA":"2024-11-13 23:04:41"}]
-          //while ($R = ibase_fetch_object($Q))   // ibase_fetch_object devuelve objetos, (stdClass)...:  $R->PROD_NOM                                    [{"PROD_ID":1,"PROD_NOM":"producto1","FECH_CREA":"2024-11-13 12:19:34"},{"PROD_ID":2,"PROD_NOM":"producto2","FECH_CREA":"2024-11-13 23:04:41"}]
-              $dataSet[]=$R;
-
-          return $dataSet;// array de arrays o de objetos
-
-        }catch(Exception $e){
-          $dataSet=[];
-          return "ERROR: conexionFB:function generarDataset(): " . $e->getMessage() ;
-        }finally{}
-
-    }  
-*/
 
 /*
 RESULTADO DE function generarDataset
@@ -213,77 +197,80 @@ json_encode::::::::::::::::::::::
     ]
 }
 */
-public function serverinfo(){
-  $serverData=[];
-  if (($service = ibase_service_attach($this->serverFB, $this->dbusuario, $this->dbpassword)) != FALSE)
-  {
-      // Successfully attached.
-      // Output the info
-      $serverData["version"]=         ibase_server_info($service, IBASE_SVC_SERVER_VERSION) ;
-      $serverData["implementation"]=  ibase_server_info($service, IBASE_SVC_IMPLEMENTATION);
-      //$serverData["users"]=   print_r(ibase_server_info($service, IBASE_SVC_GET_USERS), true);
-      $serverData["users"]=           ibase_server_info($service, IBASE_SVC_GET_USERS);
-      $serverData["directory"]=       ibase_server_info($service, IBASE_SVC_GET_ENV);
-      $serverData["lockPath"]=        ibase_server_info($service, IBASE_SVC_GET_ENV_LOCK);
-      $serverData["libPath"]=         ibase_server_info($service, IBASE_SVC_GET_ENV_MSG);
-      $serverData["userdbPath"]=      ibase_server_info($service, IBASE_SVC_USER_DBPATH);
-      $serverData["establishedConnections"]=ibase_server_info($service, IBASE_SVC_SVR_DB_INFO);
+  public function serverinfo(){
+    $serverData=[];
+    if (($service = ibase_service_attach($this->serverFB, $this->dbuser, $this->dbpassword)) != FALSE)
+    {
+        // Successfully attached.
+        // Output the info
+        $serverData["version"]=         ibase_server_info($service, IBASE_SVC_SERVER_VERSION) ;
+        $serverData["implementation"]=  ibase_server_info($service, IBASE_SVC_IMPLEMENTATION);
+        //$serverData["users"]=   print_r(ibase_server_info($service, IBASE_SVC_GET_USERS), true);
+        $serverData["users"]=           ibase_server_info($service, IBASE_SVC_GET_USERS);
+        $serverData["directory"]=       ibase_server_info($service, IBASE_SVC_GET_ENV);
+        $serverData["lockPath"]=        ibase_server_info($service, IBASE_SVC_GET_ENV_LOCK);
+        $serverData["libPath"]=         ibase_server_info($service, IBASE_SVC_GET_ENV_MSG);
+        $serverData["userdbPath"]=      ibase_server_info($service, IBASE_SVC_USER_DBPATH);
+        $serverData["establishedConnections"]=ibase_server_info($service, IBASE_SVC_SVR_DB_INFO);
 
-      // Detach from server (disconnect)
-      ibase_service_detach($service);
+        // Detach from server (disconnect)
+        ibase_service_detach($service);
 
-  }
-  return $serverData;
-}//serverinfo()
+    }
+    return $serverData;
+  }//serverinfo()
 
-/*serverinfo
-$serverData----------------------------------
-{"version":"WI-V2.1.7.18553 Firebird 2.1","implementation":"Firebird\/x86-64\/Windows NT","users":[{"user_name":"SYSDBA","first_name":"Sql","middle_name":"Server","last_name":"Administrator","user_id":0,"group_id":0}],"directory":"C:\\Program Files\\Firebird\\Firebird_2_1\\","lockPath":"C:\\Program Files\\Firebird\\Firebird_2_1\\","libPath":"C:\\Program Files\\Firebird\\Firebird_2_1\\","userdbPath":"C:\\Program Files\\Firebird\\Firebird_2_1\\security2.fdb","establishedConnections":{"attachments":1,"databases":1,"0":"D:\\MOVIALNORTE\\TELEVISORES\\DBS\\HOSPITALES.FDB"}}
+  /*serverinfo
+  $serverData----------------------------------
+  {"version":"WI-V2.1.7.18553 Firebird 2.1","implementation":"Firebird\/x86-64\/Windows NT","users":[{"user_name":"SYSDBA","first_name":"Sql","middle_name":"Server","last_name":"Administrator","user_id":0,"group_id":0}],"directory":"C:\\Program Files\\Firebird\\Firebird_2_1\\","lockPath":"C:\\Program Files\\Firebird\\Firebird_2_1\\","libPath":"C:\\Program Files\\Firebird\\Firebird_2_1\\","userdbPath":"C:\\Program Files\\Firebird\\Firebird_2_1\\security2.fdb","establishedConnections":{"attachments":1,"databases":1,"0":"D:\\MOVIALNORTE\\TELEVISORES\\DBS\\HOSPITALES.FDB"}}
 
-array (size=8)
-'version' => string 'WI-V2.1.7.18553 Firebird 2.1' (length=28)
-'implementation' => string 'Firebird/x86-64/Windows NT' (length=26)
-'users' => 
-array (size=1)
-0 => 
-array (size=6)
-'user_name' => string 'SYSDBA' (length=6)
-'first_name' => string 'Sql' (length=3)
-'middle_name' => string 'Server' (length=6)
-'last_name' => string 'Administrator' (length=13)
-'user_id' => int 0
-'group_id' => int 0
-'directory' => string 'C:\Program Files\Firebird\Firebird_2_1\' (length=39)
-'lockPath' => string 'C:\Program Files\Firebird\Firebird_2_1\' (length=39)
-'libPath' => string 'C:\Program Files\Firebird\Firebird_2_1\' (length=39)
-'userdbPath' => string 'C:\Program Files\Firebird\Firebird_2_1\security2.fdb' (length=52)
-'establishedConnections' => 
-array (size=3)
-'attachments' => int 1
-'databases' => int 1
-0 => string 'D:\MOVIALNORTE\TELEVISORES\DBS\HOSPITALES.FDB' (length=45)
+  array (size=8)
+  'version' => string 'WI-V2.1.7.18553 Firebird 2.1' (length=28)
+  'implementation' => string 'Firebird/x86-64/Windows NT' (length=26)
+  'users' => 
+  array (size=1)
+  0 => 
+  array (size=6)
+  'user_name' => string 'SYSDBA' (length=6)
+  'first_name' => string 'Sql' (length=3)
+  'middle_name' => string 'Server' (length=6)
+  'last_name' => string 'Administrator' (length=13)
+  'user_id' => int 0
+  'group_id' => int 0
+  'directory' => string 'C:\Program Files\Firebird\Firebird_2_1\' (length=39)
+  'lockPath' => string 'C:\Program Files\Firebird\Firebird_2_1\' (length=39)
+  'libPath' => string 'C:\Program Files\Firebird\Firebird_2_1\' (length=39)
+  'userdbPath' => string 'C:\Program Files\Firebird\Firebird_2_1\security2.fdb' (length=52)
+  'establishedConnections' => 
+  array (size=3)
+  'attachments' => int 1
+  'databases' => int 1
+  0 => string 'D:\MOVIALNORTE\TELEVISORES\DBS\HOSPITALES.FDB' (length=45)
 
 
-{"version":"WI-V2.1.7.18553 Firebird 2.1","implementation":"Firebird\/x86-64\/Windows NT","users":"Array\n(\n [0] => Array\n (\n [user_name] => SYSDBA\n [first_name] => Sql\n [middle_name] => Server\n [last_name] => Administrator\n [user_id] => 0\n [group_id] => 0\n )\n\n)\n","directory":"C:\\Program Files\\Firebird\\Firebird_2_1\\","lockPath":"C:\\Program Files\\Firebird\\Firebird_2_1\\","libPath":"C:\\Program Files\\Firebird\\Firebird_2_1\\","userdbPath":"C:\\Program Files\\Firebird\\Firebird_2_1\\security2.fdb","establishedConnections":"Array\n(\n [attachments] => 1\n [databases] => 1\n [0] => D:\\MOVIALNORTE\\TELEVISORES\\DBS\\HOSPITALES.FDB\n)\n"}
-*/
+  {"version":"WI-V2.1.7.18553 Firebird 2.1","implementation":"Firebird\/x86-64\/Windows NT","users":"Array\n(\n [0] => Array\n (\n [user_name] => SYSDBA\n [first_name] => Sql\n [middle_name] => Server\n [last_name] => Administrator\n [user_id] => 0\n [group_id] => 0\n )\n\n)\n","directory":"C:\\Program Files\\Firebird\\Firebird_2_1\\","lockPath":"C:\\Program Files\\Firebird\\Firebird_2_1\\","libPath":"C:\\Program Files\\Firebird\\Firebird_2_1\\","userdbPath":"C:\\Program Files\\Firebird\\Firebird_2_1\\security2.fdb","establishedConnections":"Array\n(\n [attachments] => 1\n [databases] => 1\n [0] => D:\\MOVIALNORTE\\TELEVISORES\\DBS\\HOSPITALES.FDB\n)\n"}
+  */
 
 } // class conexionFB
 
 
 function ejecutar(){
-  //http://192.168.1.20/crud/models/conexionFB.php?query=SELECT * FROM HOSPITALES WHERE idhospital=3&db=serviciowebtv.sytes.net/3050:c:/tv/hospitales.fdb
   try{
 
     $dataSet=null;
 
-    if (! empty($_REQUEST['query']))
-    if (! empty($_REQUEST['db'])){
-        //$SQL_sentence=htmlspecialchars($_REQUEST['query']);// htmlspecialchars($_GET["name"])
-        $SQL_sentence=$_REQUEST['query'];// htmlspecialchars($_GET["name"])
+    if ($_REQUEST['query'])
+    if ($_REQUEST['db']){
         //$peticion=new conexionFB('localhost/3050:D:/movialnorte/Televisores/DBs/hospitales.fdb', null, null);
-        $peticion=new conexionFB($_REQUEST['db'], null, null);
-        if(isset($peticion))
-          $dataSet=$peticion->executeSQL($SQL_sentence);
+        //$SQL_sentence=htmlspecialchars($_REQUEST['query']);// htmlspecialchars($_GET["name"])
+        $dburl_=$_REQUEST['db'];
+        $SQL_sentence=$_REQUEST['query'];// htmlspecialchars($_GET["name"])
+        $dbuser_=$_REQUEST['dbuser'];  //optativos, tiene valor por defecto
+        $dbpassword_=$_REQUEST['dbpassword'];//optativos, tiene valor por defecto
+
+        $conexion=new conexionFB($dburl_, $dbuser_, $dbpassword_);
+        if(($conexion))
+          $dataSet=$conexion->executeSQL($SQL_sentence);
     }
 
     //if(isset($dataSet))
@@ -300,4 +287,42 @@ function ejecutar(){
 
 };
 ejecutar();
+
+/*
+EJEMPLO DE PETICION A ESTE PHP:
+
+//https://psh.sytes.net/crud/config/conexionFB.php?query=SELECT * FROM HOSPITALES WHERE idhospital in (3,5,6)&db=serviciowebtv.sytes.net/3050:c:/tv/hospitales.fdb
+        
+
+        var url="https://psh.sytes.net/crud/config/conexionFB.php";
+        var urlServerFB="serviciowebtv.sytes.net/3050:c:/tv/hospitales.fdb";
+        var dbuser="";
+        var dbpassword="";
+        var query="SELECT * FROM HOSPITALES WHERE idhospital in (3,5,6)";
+        //var query="SELECT a.PROD_ID, a.PROD_NOM, a.EST, a.FECH_CREA, a.FECH_MODI, a.FECH_ELIM FROM TM_PRODUCTO a";
+
+        function pedirDatos(){
+            //peticionAjax("POST",url, cb, `query=${query}&db=${urlServerFB}`, true, "pedro", "Silvia_976");
+            peticionAjax("POST",url, cb, `query=${query}&db=${urlServerFB}&dbuser=${dbuser}&dbpassword=${dbpassword}`, true, "pedro", "Silvia_976");
+        }
+
+        function cb(Lxhr){
+            try {
+                console.log('response status= '+ Lxhr.status) ;
+                
+                if(Lxhr.status == 200){
+                    document.getElementById("divRecepcion").innerHTML=Lxhr.responseText;
+                    aaa=JSON.parse(Lxhr.responseText);
+                    generarTablaHtml_simple(aaa); // generarTablaHtml_simple.js
+                }
+            } catch (err) {
+                    console.log('ERROR funcion cb(Lxhr): '+ err );
+            }
+        }
+
+        function onload(){
+            pedirDatos();
+        }
+
+        */
 ?>
