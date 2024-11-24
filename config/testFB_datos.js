@@ -6,9 +6,9 @@
   var dbpassword="";
   var dbUrl="serviciowebtv.sytes.net/3050:c:/tv/hospitales.fdb";
   //var query="SELECT * FROM HOSPITALES WHERE idhospital in (3,5,6,7,8)";
-  var query="SELECT IDHOSPITAL,HOSPITAL,IP,RUTADB rut FROM HOSPITALES WHERE idhospital in (3,5,6,7,8)";
+  var query="SELECT IDHOSPITAL,HOSPITAL,IP,RUTADB,fehoInstalacion,nHabitaciones nHabs FROM HOSPITALES WHERE idhospital in (2,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18)";
   //var query="SELECT a.PROD_ID, a.PROD_NOM, a.EST, a.FECH_CREA, a.FECH_MODI, a.FECH_ELIM FROM TM_PRODUCTO a";
-
+ // , a.NHABITACIONES, a.NHABITACIONESACTIVAS,
 
   var columns= [
     { title: 'Name' },
